@@ -1,0 +1,40 @@
+name: Site Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: catalog-app/package-lock.json
+
+      - name: Build catalog index
+        run: node scripts/build-index.mjs
+
+      - name: Build catalog prototype (React + Vite)
+        run: |
+          npm ci
+          npm run build
+        working-directory: catalog-app
+
+      - name: Upload catalog data
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-public
+          path: site/public
+
+      - name: Upload catalog prototype
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-catalog
+          path: site/catalog

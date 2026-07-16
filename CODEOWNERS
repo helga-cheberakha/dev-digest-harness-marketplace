@@ -1,0 +1,11 @@
+# Default owners for the whole catalog.
+# Responsible for reviewing PRs and approving new plugins into the marketplace.
+* @helga-cheberakha
+
+# Per-plugin owners — ownership means responsibility for review and
+# maintenance, not exclusivity. Add a line here whenever a plugin gets
+# a dedicated maintainer.
+/plugins/engineering-paved-path/ @helga-cheberakha
+/plugins/research-tools/         @helga-cheberakha
+/plugins/architecture-review/    @helga-cheberakha
+/plugins/sdd-engineering/        @helga-cheberakha

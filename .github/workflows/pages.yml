@@ -1,0 +1,50 @@
+name: Deploy Pages
+
+# Deploys site/ to GitHub Pages after Site Build has succeeded on main.
+# Rebuilds both generated pieces itself (site/public/ and the catalog-app/
+# React build into site/catalog/) rather than downloading Site Build's
+# artifacts, so this job's output is self-contained. See docs/SITE-SPEC.md.
+
+on:
+  workflow_run:
+    workflows: ["Site Build"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: catalog-app/package-lock.json
+
+      - name: Build catalog index
+        run: node scripts/build-index.mjs
+
+      - name: Build catalog prototype (React + Vite)
+        run: |
+          npm ci
+          npm run build
+        working-directory: catalog-app
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

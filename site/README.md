@@ -37,9 +37,27 @@ there's only ever one page. Markdown detail (README bodies) — `marked` + `DOMP
 
 ## Hosting (GitHub Pages)
 
-Deployed automatically by `.github/workflows/pages.yml` (build → `dist/` → Pages).
-PRs are checked by a separate workflow, `.github/workflows/site-build.yml`
-(build only, no deploy) — kept apart from `validate.yml`'s marketplace/harness
-checks so a broken site build shows as its own status, not mixed in with those.
+Deployed automatically by `.github/workflows/pages.yml` (build → `dist/` → Pages)
+on every push to `main`, after `.github/workflows/site-build.yml` (a PR-only
+build check, no deploy) has succeeded — kept apart from `validate.yml`'s
+marketplace/harness checks so a broken site build shows as its own status,
+not mixed in with those.
 
-**One-time setup:** Settings → Pages → Source: **GitHub Actions**.
+**One-time setup** (repo admin, only needed once — before the first deploy
+will actually go live):
+
+1. GitHub → this repo → **Settings → Pages**.
+2. Under **Build and deployment → Source**, select **GitHub Actions**
+   (not "Deploy from a branch" — `pages.yml` already does the build).
+3. Push to `main` (or open **Actions → Deploy Pages → Run workflow** to
+   trigger it manually). The first successful run publishes the site.
+
+**Where to find the live page:**
+
+- **Settings → Pages** shows the live URL at the top once a deploy has
+  succeeded.
+- **Actions → Deploy Pages** → the latest run → the `deploy` job's
+  `page_url` output links straight to it.
+- GitHub Pages always serves a project site at
+  `https://<owner>.github.io/<repo>/`, so for this repo that's
+  **https://helga-cheberakha.github.io/dev-digest-harness-marketplace/**.

@@ -1,12 +1,12 @@
 import { strings } from "../i18n/strings.js";
 
-export default function Header({ unitCount, view, onNavCatalog, onNavGraph }) {
+export default function Header({ unitCount, view, onNavHome, onNavCatalog, onNavGraph }) {
   const catalogActive = view === "catalog" || view === "detail";
 
   return (
     <header className="header">
       <div className="header-inner">
-        <button className="brand" type="button" data-action="nav-catalog" onClick={onNavCatalog}>
+        <button className="brand" type="button" data-action="nav-home" onClick={onNavHome}>
           <span className="brand-mark" />
           <span className="brand-text">
             <span className="brand-name">{strings.brand.name}</span>
@@ -14,6 +14,14 @@ export default function Header({ unitCount, view, onNavCatalog, onNavGraph }) {
           </span>
         </button>
         <nav className="nav">
+          <button
+            type="button"
+            className={"nav-btn" + (view === "home" ? " active" : "")}
+            data-action="nav-home"
+            onClick={onNavHome}
+          >
+            {strings.nav.home}
+          </button>
           <button
             type="button"
             className={"nav-btn" + (catalogActive ? " active" : "")}

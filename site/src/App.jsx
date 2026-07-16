@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Header from "./components/Header.jsx";
+import Home from "./components/Home.jsx";
 import CatalogView from "./components/CatalogView.jsx";
 import GraphView from "./components/GraphView.jsx";
 import PluginDetail from "./components/PluginDetail.jsx";
@@ -14,11 +15,17 @@ function parseUrlState() {
     const v = p.get(key);
     if (v) v.split(",").forEach((x) => { filters[key][x] = true; });
   }
-  const view = p.get("view");
+  let view = p.get("view");
+  if (!["home", "catalog", "graph", "detail"].includes(view)) {
+    // No (valid) explicit view: a search/filter link still means "show results",
+    // everything else lands on the home page.
+    const hasSearchState = p.get("q") || ["type", "category", "status"].some((k) => p.get(k));
+    view = hasSearchState ? "catalog" : "home";
+  }
   return {
     query: p.get("q") || "",
     filters,
-    view: view === "graph" || view === "detail" ? view : "catalog",
+    view,
     selectedPlugin: p.get("plugin") || null,
     anchor: p.get("section") || null,
   };
@@ -45,12 +52,18 @@ export default function App() {
       const sel = Object.keys(filters[key]).filter((k) => filters[key][k]);
       if (sel.length) p.set(key, sel.join(","));
     }
-    if (view !== "catalog") p.set("view", view);
+    if (view !== "home") p.set("view", view);
     if (view === "detail" && selectedPlugin) p.set("plugin", selectedPlugin);
     const qs = p.toString();
     window.history.replaceState(null, "", window.location.pathname + (qs ? "?" + qs : ""));
   }, [query, filters, view, selectedPlugin]);
 
+  function goHome() {
+    setView("home");
+    setSelectedPlugin(null);
+    setPendingAnchor(null);
+    window.scrollTo({ top: 0 });
+  }
   function goCatalog() {
     setView("catalog");
     setSelectedPlugin(null);
@@ -83,7 +96,7 @@ export default function App() {
   if (catalog.status !== "ready") {
     return (
       <div className="page">
-        <Header unitCount={0} view="catalog" onNavCatalog={() => {}} onNavGraph={() => {}} />
+        <Header unitCount={0} view="home" onNavHome={() => {}} onNavCatalog={() => {}} onNavGraph={() => {}} />
         <main className="main">
           <div className="empty-state">
             <div className="empty-title">
@@ -99,8 +112,24 @@ export default function App() {
 
   return (
     <div className="page">
-      <Header unitCount={entries.length} view={view} onNavCatalog={goCatalog} onNavGraph={goGraph} />
+      <Header
+        unitCount={entries.length}
+        view={view}
+        onNavHome={goHome}
+        onNavCatalog={goCatalog}
+        onNavGraph={goGraph}
+      />
 
+      {view === "home" && (
+        <Home
+          catalog={catalog.data}
+          entries={entries}
+          plugins={plugins}
+          onOpen={openPlugin}
+          onNavCatalog={goCatalog}
+          onNavGraph={goGraph}
+        />
+      )}
       {view === "catalog" && (
         <CatalogView
           index={entries}

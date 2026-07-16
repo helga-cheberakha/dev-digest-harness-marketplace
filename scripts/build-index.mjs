@@ -297,6 +297,7 @@ for (const entry of marketplace.plugins ?? []) {
 const index = {
   name: marketplaceName,
   description: marketplace.description ?? marketplace.metadata?.description ?? "",
+  repoSlug: REPO_SLUG,
   generatedAt: new Date().toISOString(),
   entries,
 };

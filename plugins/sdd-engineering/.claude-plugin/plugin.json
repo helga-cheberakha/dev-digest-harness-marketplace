@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "sdd-engineering",
+  "version": "1.0.0",
+  "description": "Spec-Driven Development workflow: spec, plan, implement, verify, retro. Depends on the three plugins above.",
+  "author": { "name": "Helga Cheberakha", "email": "helga.cheberakha@gmail.com" },
+  "repository": "https://github.com/helga-cheberakha/dev-digest-harness-marketplace",
+  "license": "MIT",
+  "keywords": ["spec-driven-development", "workflow", "agents", "planning"],
+  "dependencies": [
+    { "name": "engineering-paved-path", "version": "^1.0.0" },
+    { "name": "research-tools", "version": "^1.0.0" },
+    { "name": "architecture-review", "version": "^1.0.0" }
+  ]
+}

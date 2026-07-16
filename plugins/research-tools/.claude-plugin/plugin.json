@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "research-tools",
+  "version": "1.0.0",
+  "description": "Read-only research agent that gathers and fact-checks information from the codebase or the public web.",
+  "author": { "name": "Helga Cheberakha", "email": "helga.cheberakha@gmail.com" },
+  "repository": "https://github.com/helga-cheberakha/dev-digest-harness-marketplace",
+  "license": "MIT",
+  "keywords": ["research", "read-only", "agent"]
+}

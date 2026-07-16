@@ -50,8 +50,9 @@ Work systematically through the sources that match the agreed scope.
 ### Project search order
 1. `docs/`, `specs/`, and any project notes/insights files (curated, highest signal)
 2. `AGENTS.md` and `CLAUDE.md` files (conventions and guide)
-3. Source files — use `grep -r` / `find` to locate symbols, then `Read` to examine context
-4. `git log --oneline` or `git log --follow` to understand history if relevant
+3. `README.md` files (project/package-level orientation, setup, and usage)
+4. Source files — use `grep -r` / `find` to locate symbols, then `Read` to examine context
+5. `git log --oneline` or `git log --follow` to understand history if relevant
 
 ### Internet search
 - Use `WebSearch` for current information, library docs, or concepts not in the project

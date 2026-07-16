@@ -3,8 +3,18 @@ name: Site Build
 on:
   push:
     branches: [main]
+    paths:
+      - "plugins/**"
+      - "scripts/build-index.mjs"
+      - "site/**"
+      - ".github/workflows/site-build.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "plugins/**"
+      - "scripts/build-index.mjs"
+      - "site/**"
+      - ".github/workflows/site-build.yml"
 
 jobs:
   build-index:
@@ -15,7 +25,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Build catalog index
         run: node scripts/build-index.mjs
@@ -26,28 +36,28 @@ jobs:
           name: site-public
           path: site/public
 
-  build-catalog-app:
-    name: Build catalog prototype (React + Vite)
+  build-site:
+    name: Build catalog site (React + Vite)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
-          cache-dependency-path: catalog-app/package-lock.json
+          cache-dependency-path: site/package-lock.json
 
       - name: Install
         run: npm ci
-        working-directory: catalog-app
+        working-directory: site
 
       - name: Build
         run: npm run build
-        working-directory: catalog-app
+        working-directory: site
 
-      - name: Upload catalog prototype
+      - name: Upload site build
         uses: actions/upload-artifact@v4
         with:
-          name: site-catalog
-          path: site/catalog
+          name: site-dist
+          path: site/dist

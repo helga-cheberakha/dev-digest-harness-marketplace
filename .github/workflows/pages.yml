@@ -1,9 +1,10 @@
 name: Deploy Pages
 
-# Deploys site/ to GitHub Pages after Site Build has succeeded on main.
-# Rebuilds both generated pieces itself (site/public/ and the catalog-app/
-# React build into site/catalog/) rather than downloading Site Build's
-# artifacts, so this job's output is self-contained. See docs/SITE-SPEC.md.
+# Deploys the catalog site to GitHub Pages after Site Build has succeeded on
+# main. Rebuilds it here rather than downloading Site Build's artifacts, so
+# this job's output is self-contained. `npm run build` in site/ regenerates
+# the catalog index (via its `prebuild` hook) and produces site/dist/, the
+# only thing actually deployed. See docs/SITE-SPEC.md.
 
 on:
   workflow_run:
@@ -29,22 +30,21 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
-          cache-dependency-path: catalog-app/package-lock.json
+          cache-dependency-path: site/package-lock.json
 
-      - name: Build catalog index
-        run: node scripts/build-index.mjs
+      - name: Install
+        run: npm ci
+        working-directory: site
 
-      - name: Build catalog prototype (React + Vite)
-        run: |
-          npm ci
-          npm run build
-        working-directory: catalog-app
+      - name: Build (regenerates the catalog index, then the site)
+        run: npm run build
+        working-directory: site
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: site/dist
 
       - id: deployment
         uses: actions/deploy-pages@v4

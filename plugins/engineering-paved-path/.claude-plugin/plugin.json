@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "engineering-paved-path",
+  "version": "1.0.0",
+  "description": "Shared engineering best-practice skills: React, Next.js, Fastify, testing, security, architecture, and full-stack foundations (TypeScript, Zod, Drizzle, PostgreSQL).",
+  "author": { "name": "Helga Cheberakha", "email": "helga.cheberakha@gmail.com" },
+  "repository": "https://github.com/helga-cheberakha/dev-digest-harness-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "nextjs",
+    "fastify",
+    "testing",
+    "security",
+    "architecture",
+    "typescript",
+    "zod",
+    "drizzle",
+    "postgresql"
+  ]
+}

@@ -143,6 +143,8 @@ You receive a request plus, usually, one or more **design sources** the user sup
 - **Existing artifacts in the repo** — read relevant `docs/plans/*`, module `docs/`,
   `<module>/specs/*`, and the actual code with `Read`/`Grep`/`Glob` to ground the spec in
   how things really work today.
+- **Repo-root `README.md`**, if present — project-level orientation (purpose, conventions,
+  setup) that context often assumes but never states explicitly.
 
 For broad or open-ended exploration, delegate to the **`researcher`** agent (from the
 `research-tools` plugin, referenced as `research-tools:researcher` — you have the `Agent`

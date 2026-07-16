@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 — 2026-07-17
+
+- `spec-creator` now also reads the repo-root `README.md`, if present, as a
+  grounding source alongside module docs and existing specs — project-level
+  orientation that context often assumes but never states explicitly.
+  Verifies the version bump propagates through Claude Code's marketplace
+  auto-update mechanism.
+
 ## 1.0.0 — 2026-07-16
 
 - Initial release: 6 agents (`spec-creator`, `implementation-planner`,

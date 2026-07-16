@@ -163,8 +163,9 @@ skills that don't apply and say so in **Not Investigated** rather than forcing a
 Before Phase 1, read whatever the host project uses to describe its own package/module layout —
 typically a root `CLAUDE.md`/`AGENTS.md`, or one per package/module. Build a short map (package
 name → stack → key constraints) from what you find; do not assume any particular package names or
-layout. If no such map exists, note that in **Not Investigated** and infer the layout from the
-directory structure instead.
+layout. If none of those exist, fall back to the root `README.md` for a coarser picture of the
+layout before inferring from the directory structure. If nothing at all is found, note that in
+**Not Investigated** and infer the layout from the directory structure instead.
 
 ---
 

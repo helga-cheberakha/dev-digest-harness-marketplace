@@ -1,12 +1,15 @@
 # Specification: the four plugins and how they fit together
 
-> What we extract from the DevDigest project's `.claude/` into this
+> What we extract from the source project's `.claude/` into this
 > marketplace, and the shape each plugin takes. Structure/manifest rules
 > live in [`PLUGIN-GUIDELINES.md`](./PLUGIN-GUIDELINES.md), releases in
 > [`RELEASES.md`](./RELEASES.md).
 
-**Content source:** the DevDigest project, directory `.claude/` — agents,
-skills, hooks, and evals live there.
+**Content source:** an internal engineering-harness project's `.claude/`
+directory — agents, skills, hooks, and evals live there. The source
+project's own name, module layout, and internal policies are not
+reproduced here; every ported component was generalized to be
+project-agnostic (see the per-plugin sections below for what changed).
 
 ---
 
@@ -34,28 +37,28 @@ sdd-engineering  ──depends^1.0.0──▶  engineering-paved-path ◀─┐
 
 Full visualization — [`DEPENDENCY-GRAPH.md`](./DEPENDENCY-GRAPH.md).
 
-**What we do NOT port** (stays in the product repo — verified
-product-specific, not just assumed):
+**What we do NOT port** (stays in the source project — verified
+project-specific, not just assumed):
 - `code-review-conventions`, `pr-self-review` — the review-process/gate
-  skills are written against DevDigest's own severity/blocking policy and
-  its `origin/main` diff gate.
-- `dependency-checker` — analyzes DevDigest's own package layout
-  (`server`, `client`, `reviewer-core`, `mcp-server`), with no
-  project-agnostic equivalent to generalize into.
+  skills are written against the source project's own severity/blocking
+  policy and its own branch-diff gate.
+- `dependency-checker` — analyzes the source project's own multi-package
+  layout, with no project-agnostic equivalent to generalize into.
 - `engineering-insights` **is** ported, but only after a generalization
   pass — see §3, it ships inside `sdd-engineering` as optional
   infrastructure, not standalone.
 - `implementer-backend` and `implementer-ui` **are** ported too — see §3.
-  They aren't DevDigest-specific: they're a generic cost-optimization
-  (a trimmed skill set per task type), built entirely from skills already
-  generalized in `engineering-paved-path`.
-- Agents `doc-writer`, `insights-curator`, `architecture-reviewer-lite`,
-  `test-writer` (disabled) — a product-doc writer, an insights-file
-  curator, a cost-trimmed review variant, and a disabled test-writer, all
-  bound to DevDigest's own module layout or product decisions (e.g.
-  "no dedicated test-writer" is a DevDigest cost call, not a portable
-  default) with no project-agnostic equivalent worth generalizing.
-- Product specs, secrets, cache, DevDigest-specific instructions.
+  They aren't source-project-specific: they're a generic
+  cost-optimization (a trimmed skill set per task type), built entirely
+  from skills already generalized in `engineering-paved-path`.
+- Agents that write product docs, curate an internal insights archive, a
+  cost-trimmed review variant, and a disabled test-writer — all bound to
+  the source project's own module layout or product decisions (e.g. "no
+  dedicated test-writer" was a cost call specific to that project, not a
+  portable default) with no project-agnostic equivalent worth
+  generalizing.
+- Product specs, secrets, cache, and any project-specific instructions
+  from the source project.
 
 ---
 
@@ -98,21 +101,21 @@ plugins/engineering-paved-path/
 ```
 
 Eleven of these twelve skills ported with no changes needed — no
-DevDigest-specific paths in their content. **`onion-architecture` is the
-exception**: the source version is a DevDigest-*instance* skill, hardcoded
-to `server/`, `reviewer-core/`, `@devdigest/shared`, and a live drift count
-against that codebase's `dependency-cruiser` graph. It was **rewritten**
-(not copied) into a project-agnostic onion/ports-and-adapters skill: same
-core teaching (the dependency rule, a generic layer table, the "judge the
-import closure, not the first hop" decision framework, enforcing it with
-`dependency-cruiser`), with the concrete DevDigest layer map and drift
-numbers replaced by a generic example a consuming project adapts to its
-own layout.
+project-specific paths in their content. **`onion-architecture` is the
+exception**: the source version was a project-*instance* skill, hardcoded
+to that codebase's own package names and a live drift count against its
+own import-graph linter output. It was **rewritten** (not copied) into a
+project-agnostic onion/ports-and-adapters skill: same core teaching (the
+dependency rule, a generic layer table, the "judge the import closure,
+not the first hop" decision framework, enforcing it with a static
+import-graph linter), with the concrete source-project layer map and
+drift numbers replaced by a generic example a consuming project adapts
+to its own layout.
 
 ### 2.2 `research-tools`
 
 Provides a single **read-only** `researcher` agent. Ports with only the
-description generalized (removes "for DevDigest" framing) — the agent
+description generalized (removes source-project framing) — the agent
 body was already project-agnostic (no hardcoded paths, reads whatever
 project it's invoked in).
 
@@ -128,13 +131,12 @@ plugins/research-tools/
 ### 2.3 `architecture-review`
 
 Provides a **generalized** `architecture-reviewer` agent. In the source,
-`architecture-reviewer` is **tightly bound to DevDigest**
-(`server/`, `client/`, `reviewer-core/`, onion layering specifics,
-hardcoded `grep` commands against `server/src/modules/*`,
-`@devdigest/shared`). This is **not** a copy-paste — it is a
-generalization pass:
+`architecture-reviewer` was **tightly bound to the source project** —
+hardcoded package names, onion layering specifics tied to that project's
+own layout, and grep commands against its own directory structure. This
+is **not** a copy-paste — it is a generalization pass:
 
-- Drop the DevDigest-specific paths and invariants; replace them with
+- Drop the project-specific paths and invariants; replace them with
   explicit inputs (the set of structural rules is passed to the agent via
   its invocation context, not hardcoded).
 - Keep the read-only guarantee, the five-phase review structure, and the
@@ -185,9 +187,9 @@ plugins/sdd-engineering/
 ```
 
 `engineering-insights` is optional infrastructure, shipped only after its own generalization
-pass (the source version routed writes to a fixed DevDigest module list — the generalized
-version routes to whatever module the work touched, generically). Teams that don't want
-cross-session insight capture can simply not invoke it; it adds no required step to the
+pass (the source version routed writes to a fixed, project-specific module list — the
+generalized version routes to whatever module the work touched, generically). Teams that don't
+want cross-session insight capture can simply not invoke it; it adds no required step to the
 `implement` flow.
 
 **`implementer-backend` / `implementer-ui` — why they're worth the extra two files.** The
@@ -202,7 +204,7 @@ completion report) with a trimmed, namespaced skill set — backend: `drizzle-or
 `zod`, `security` (7, not 11) — plus a guard clause that stops and reports a blocker if a task
 turns out to be the other profile's job. `implement`'s Step 1 routes by the plan's `Type` field:
 `backend`/`core` → `implementer-backend`, `ui`/`e2e` → `implementer-ui`, spanning both →
-generic `implementer`. None of this is DevDigest-specific — it's a portable pattern, built
+generic `implementer`. None of this is project-specific — it's a portable pattern, built
 entirely from skills already generalized in §2.1.
 
 **How the pieces work together:**
@@ -237,12 +239,12 @@ spec-creator ─▶ implementation-planner ─▶ [human APPROVES the plan]
 
 ### Porting rules
 
-- **Remove DevDigest paths, replace with explicit inputs**: `implement`'s
-  hardcoded plan-directory convention and git baseline become skill
-  parameters; `spec-creator`'s DevDigest module list becomes explicit
-  input; `architecture-reviewer` — see §2.3. `implementer-backend` and
-  `implementer-ui` get the same treatment as `implementer`: the
-  DevDigest module-map table is replaced with "read the plan / the
+- **Remove source-project paths, replace with explicit inputs**:
+  `implement`'s hardcoded plan-directory convention and git baseline
+  become skill parameters; `spec-creator`'s hardcoded module list becomes
+  explicit input; `architecture-reviewer` — see §2.3. `implementer-backend`
+  and `implementer-ui` get the same treatment as `implementer`: the
+  hardcoded module-map table is replaced with "read the plan / the
   project's own `CLAUDE.md`/`AGENTS.md`", and their frontmatter `skills`
   list is namespaced to `engineering-paved-path:<skill>`.
 - **Reference skills namespaced**:
@@ -250,7 +252,7 @@ spec-creator ─▶ implementation-planner ─▶ [human APPROVES the plan]
   `research-tools:researcher`, `architecture-review:architecture-reviewer`
   — never bare names.
 - **Supporting scripts via `${CLAUDE_SKILL_DIR}`.** The source hardcodes
-  `.claude/skills/workflow-retro/scripts/analyze_journals.py` — this
+  a path under its own `.claude/skills/workflow-retro/scripts/` — this
   becomes `${CLAUDE_SKILL_DIR}/scripts/analyze_journals.py`.
 - **Port evals alongside** and update them whenever behavior changes.
 

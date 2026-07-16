@@ -5,7 +5,7 @@
     "name": "Helga Cheberakha",
     "email": "helga.cheberakha@gmail.com"
   },
-  "description": "Reusable engineering-harness plugins (skills, agents) extracted from the DevDigest project.",
+  "description": "Reusable engineering-harness plugins (skills, agents) extracted from an internal engineering project.",
   "metadata": {
     "pluginRoot": "./plugins"
   },

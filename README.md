@@ -1,13 +1,13 @@
 # dev-digest-harness-marketplace
 
 A Claude Code plugin marketplace: reusable engineering-harness components
-(skills, agents, hooks) extracted from the DevDigest project and packaged
-for reuse across other projects and teams.
+(skills, agents, hooks) extracted from an internal engineering project and
+packaged for reuse across other projects and teams.
 
-This repository is separate from the DevDigest product repo on purpose —
-the marketplace has different users, owners, and a different release
-cadence. A DevDigest product change should not cut a new plugin version,
-and a skill/agent change here should not require a DevDigest release.
+This repository is separate from that project's own repo on purpose — the
+marketplace has different users, owners, and a different release cadence.
+A change to the source product should not cut a new plugin version, and a
+skill/agent change here should not require a release of that product.
 
 ## Usage
 

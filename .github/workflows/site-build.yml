@@ -7,7 +7,27 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  build-index:
+    name: Build catalog index
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build catalog index
+        run: node scripts/build-index.mjs
+
+      - name: Upload catalog data
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-public
+          path: site/public
+
+  build-catalog-app:
+    name: Build catalog prototype (React + Vite)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,20 +38,13 @@ jobs:
           cache: npm
           cache-dependency-path: catalog-app/package-lock.json
 
-      - name: Build catalog index
-        run: node scripts/build-index.mjs
-
-      - name: Build catalog prototype (React + Vite)
-        run: |
-          npm ci
-          npm run build
+      - name: Install
+        run: npm ci
         working-directory: catalog-app
 
-      - name: Upload catalog data
-        uses: actions/upload-artifact@v4
-        with:
-          name: site-public
-          path: site/public
+      - name: Build
+        run: npm run build
+        working-directory: catalog-app
 
       - name: Upload catalog prototype
         uses: actions/upload-artifact@v4
